@@ -1,0 +1,363 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#FAF9F5">
+<title>小鉑 OOXX</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #FAF9F5; --surface: #FFFFFF; --surface-2: #F0EEE6; --ink: #141413; --muted: #73726C;
+  --line: #E8E6DC; --accent: #D97757; --accent-ink: #FFFFFF; --accent-hover: #C6613F;
+  --x: #3B5BA9; --o: #D97757; --ok: #4E8A5B; --bad: #C0453A; --shadow: 0 1px 2px rgba(20,20,19,.06), 0 4px 16px rgba(20,20,19,.05);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #262624; --surface: #30302E; --surface-2: #3A3A37; --ink: #F5F4EE; --muted: #A3A29C;
+    --line: #45453F; --accent: #D97757; --accent-ink: #FFFFFF; --accent-hover: #E08A6C;
+    --x: #8FA9E8; --o: #E5926F; --ok: #7DBB8A; --bad: #E2786C; --shadow: 0 1px 2px rgba(0,0,0,.3);
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #262624; --surface: #30302E; --surface-2: #3A3A37; --ink: #F5F4EE; --muted: #A3A29C;
+  --line: #45453F; --accent: #D97757; --accent-ink: #FFFFFF; --accent-hover: #E08A6C;
+  --x: #8FA9E8; --o: #E5926F; --ok: #7DBB8A; --bad: #E2786C; --shadow: 0 1px 2px rgba(0,0,0,.3);
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; background: var(--bg); color: var(--ink); }
+body { font: 15px/1.55 "Noto Sans TC", system-ui, -apple-system, "PingFang TC", "Microsoft JhengHei", sans-serif;
+  min-height: 100dvh; }
+h1, h2 { font-family: "Noto Serif TC", Georgia, serif; font-weight: 700; margin: 0; letter-spacing: .01em; }
+button { font: inherit; color: inherit; }
+
+header { position: sticky; top: 0; z-index: 10; display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+  padding: 12px 16px; padding-top: max(12px, env(safe-area-inset-top)); background: color-mix(in srgb, var(--bg) 92%, transparent);
+  backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); }
+.brand { display: flex; align-items: center; gap: 8px; margin-right: auto; }
+.brand svg { width: 26px; height: 26px; color: var(--accent); flex: none; }
+.brand h1 { font-size: 19px; }
+.brand small { color: var(--muted); font-size: 12px; display: block; font-family: "Noto Sans TC", sans-serif; font-weight: 400; }
+.pill { font-size: 12px; padding: 3px 10px; border-radius: 999px; background: var(--surface-2); color: var(--muted); white-space: nowrap; }
+.pill.ok { color: var(--ok); } .pill.bad { color: var(--bad); }
+.icon-btn { border: 1px solid var(--line); background: var(--surface); border-radius: 10px; padding: 6px 10px; cursor: pointer; }
+
+main { display: grid; gap: 16px; padding: 16px; max-width: 1180px; margin: 0 auto;
+  grid-template-columns: 1fr; padding-bottom: 120px; }
+@media (min-width: 760px) { main { grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); padding-bottom: 24px; } }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 16px; box-shadow: var(--shadow); min-width: 0; }
+.card h2 { font-size: 16px; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+
+/* 棋盤 */
+.board-wrap { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+.board { width: min(100%, 420px); aspect-ratio: 1; display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; position: relative;
+  background: var(--surface-2); border-radius: 14px; padding: 6px; }
+.cell { position: relative; display: flex; align-items: center; justify-content: center; border: 0; background: transparent; }
+.cell:nth-child(3n+1), .cell:nth-child(3n+2) { border-right: 2px solid var(--line); }
+.cell:nth-child(-n+6) { border-bottom: 2px solid var(--line); }
+.cell .label { position: absolute; left: 8px; top: 6px; font-size: 11px; color: var(--muted); }
+.cell.blocked::after { content: "手臂搆不到"; position: absolute; bottom: 6px; font-size: 10px; color: var(--muted); }
+.cell.blocked { background: repeating-linear-gradient(45deg, transparent 0 8px, color-mix(in srgb, var(--muted) 10%, transparent) 8px 9px); }
+.cell.last { box-shadow: inset 0 0 0 3px color-mix(in srgb, var(--accent) 55%, transparent); border-radius: 8px; }
+.cell.live .piece { opacity: .45; }
+.turn { width: min(100%, 420px); text-align: center; font-size: 22px; font-weight: 700; padding: 10px 12px; border-radius: 12px; }
+.turn.you { background: var(--accent, #D97757); color: #fff; animation: turnpulse 1s ease-in-out infinite; }
+.turn.bot { background: color-mix(in srgb, var(--muted) 18%, transparent); }
+.turn:empty { display: none; }
+@keyframes turnpulse { 50% { transform: scale(1.03); filter: brightness(1.12); } }
+.cell.win { background: color-mix(in srgb, var(--accent) 16%, transparent); border-radius: 8px; }
+.piece { width: 62%; height: 62%; }
+.piece.pop { animation: pop .35s ease-out; }
+@keyframes pop { from { transform: scale(.4); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+.status { font-family: "Noto Serif TC", serif; font-size: 18px; text-align: center; min-height: 1.6em; }
+.sub { color: var(--muted); font-size: 13px; text-align: center; }
+.actions { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+.btn { border: 1px solid var(--line); background: var(--surface); border-radius: 10px; padding: 9px 16px; cursor: pointer; font-weight: 500; }
+.btn:hover { border-color: var(--accent); }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.btn.primary:hover { background: var(--accent-hover); }
+.btn.stop { background: var(--bad); border-color: var(--bad); color: #fff; }
+.cam { width: 100%; border-radius: 12px; display: block; background: #000; aspect-ratio: 16/9; object-fit: cover; }
+details summary { cursor: pointer; color: var(--muted); font-size: 13px; }
+.counts { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-top: 8px; font-size: 14px; }
+.counts input { width: 64px; padding: 6px; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); color: var(--ink); }
+
+/* 對話 */
+.chat { display: flex; flex-direction: column; height: min(70dvh, 640px); }
+@media (max-width: 759px) { .chat { height: auto; min-height: 280px; } }
+.msgs { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; padding: 4px 2px 8px; }
+.msg { max-width: 86%; padding: 9px 13px; border-radius: 14px; line-height: 1.5; word-break: break-word; }
+.msg.robot { align-self: flex-start; background: var(--surface-2); border-top-left-radius: 4px; }
+.msg.user { align-self: flex-end; background: var(--accent); color: var(--accent-ink); border-top-right-radius: 4px; }
+.msg .meta { font-size: 11px; opacity: .7; margin-top: 2px; }
+.empty { color: var(--muted); font-size: 14px; text-align: center; margin: auto; padding: 24px; }
+.composer { display: flex; gap: 8px; align-items: center; border-top: 1px solid var(--line); padding-top: 10px; }
+.composer input { flex: 1; min-width: 0; padding: 11px 14px; border-radius: 999px; border: 1px solid var(--line); background: var(--bg); color: var(--ink); font: inherit; }
+.mic { width: 52px; height: 52px; border-radius: 50%; border: 0; background: var(--accent); color: #fff; cursor: pointer; flex: none;
+  display: grid; place-items: center; box-shadow: 0 2px 10px color-mix(in srgb, var(--accent) 40%, transparent); }
+.mic svg { width: 24px; height: 24px; }
+.mic.rec { background: var(--bad); animation: pulse 1.2s infinite; }
+@keyframes pulse { 0%,100% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--bad) 45%, transparent); } 50% { box-shadow: 0 0 0 12px transparent; } }
+.hint { font-size: 12px; color: var(--muted); text-align: center; margin-top: 6px; min-height: 1.4em; }
+
+/* 手機：麥克風列固定在底部 */
+@media (max-width: 759px) {
+  .composer { position: fixed; left: 0; right: 0; bottom: 0; z-index: 20; background: var(--surface); padding: 10px 14px;
+    padding-bottom: max(10px, env(safe-area-inset-bottom)); border-top: 1px solid var(--line); box-shadow: 0 -4px 16px rgba(0,0,0,.06); }
+  .mic { width: 58px; height: 58px; }
+  .hint { position: fixed; left: 0; right: 0; bottom: calc(80px + env(safe-area-inset-bottom)); z-index: 19; }
+}
+.cell.tappable { cursor: pointer; }
+.cell.tappable:hover { outline: 2px dashed var(--accent, #D97757); outline-offset: -6px; }
+.sound-gate { position: fixed; inset: 0; z-index: 50; display: grid; place-items: center; background: color-mix(in srgb, var(--bg) 85%, transparent); }
+.sound-gate .card { max-width: 340px; text-align: center; }
+</style>
+</head>
+<body>
+<header>
+  <div class="brand">
+    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.5l1.6 5.6 5.1-2.9-2.9 5.1 5.6 1.6-5.6 1.6 2.9 5.1-5.1-2.9L12 21.5l-1.6-5.6-5.1 2.9 2.9-5.1L2.6 12.1l5.6-1.6-2.9-5.1 5.1 2.9z"/></svg>
+    <div><h1>小鉑 OOXX</h1><small>語音對弈機器人 · 你下 X、我下 O</small></div>
+  </div>
+  <span class="pill" id="pCam">相機</span>
+  <span class="pill" id="pArm">手臂</span>
+  <button class="icon-btn" id="theme" aria-label="切換深淺色">◐</button>
+</header>
+
+<main>
+  <section class="card">
+    <div class="board-wrap">
+      <div class="turn" id="turn"></div>
+      <div class="status" id="status">連線中…</div>
+      <div class="board" id="board"></div>
+      <div class="sub" id="sub"></div>
+      <div class="actions">
+        <button class="btn primary" data-cmd="new_game">新局（你先）</button>
+        <button class="btn" data-cmd="new_game" data-robot-first="1">新局（我先）</button>
+        <button class="btn" data-cmd="hint">提示</button>
+        <button class="btn" data-cmd="selfplay" title="機器自己跟自己下一盤（圈＝高手、叉＝普通）">機器對下</button>
+        <button class="btn" data-cmd="resume">繼續</button>
+        <button class="btn" data-cmd="reset" title="中斷這盤：手上這一步做完就收好棋盤，盤面和訊息清空，回到開局前">↺ 重置</button>
+        <button class="btn stop" data-cmd="stop">■ 停止</button>
+        <button class="btn" data-cmd="sim_clear" id="simClear" hidden>清空棋盤（模擬）</button>
+      </div>
+    </div>
+    <details style="margin-top:14px" id="camBox">
+      <summary>相機即時畫面（Gemini 2 俯視）</summary>
+      <img class="cam" id="cam" alt="俯視畫面" style="margin-top:8px">
+    </details>
+    <details style="margin-top:10px">
+      <summary>料區棋子數</summary>
+      <div class="counts">O 疊 <input id="cO" type="number" min="0" max="9"> X 疊 <input id="cX" type="number" min="0" max="9">
+        <button class="btn" id="setCounts">更新</button></div>
+    </details>
+  </section>
+
+  <section class="card chat">
+    <h2>對話 <span class="pill" id="pSound">聲音：關</span></h2>
+    <div class="msgs" id="msgs"><div class="empty">按下麥克風說話，例如：<br>「再來一盤，你先下」「幫我下中間」「我該下哪裡？」</div></div>
+    <form class="composer" id="composer">
+      <input id="text" placeholder="打字或按麥克風說話…" autocomplete="off" enterkeyhint="send">
+      <button class="mic" id="mic" type="button" aria-label="語音輸入">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg>
+      </button>
+    </form>
+    <div class="hint" id="hint"></div>
+  </section>
+</main>
+
+<div class="sound-gate" id="gate">
+  <div class="card">
+    <h2 style="justify-content:center">開始之前</h2>
+    <p class="sub" style="margin:10px 0 16px">瀏覽器需要你按一下才能播放機器人的聲音。</p>
+    <button class="btn primary" id="gateOn">開啟聲音</button>
+    <button class="btn" id="gateOff" style="margin-top:8px">先不要</button>
+  </div>
+</div>
+
+<script>
+const $ = s => document.querySelector(s);
+// 用 ?k=… 開的頁面（例如直播用的本機 HTTP）：每個 /api 請求都帶上存取碼，不依賴 cookie
+(() => { const k = new URLSearchParams(location.search).get("k"); if (!k) return; const f = window.fetch;
+  window.fetch = (u, o) => f(typeof u === "string" && u.startsWith("/api") ? u + (u.includes("?") ? "&" : "?") + "k=" + encodeURIComponent(k) : u, o); })();
+const XSVG = '<svg class="piece" viewBox="0 0 100 100"><path d="M22 22L78 78M78 22L22 78" stroke="var(--x)" stroke-width="12" stroke-linecap="round"/></svg>';
+const OSVG = '<svg class="piece" viewBox="0 0 100 100"><circle cx="50" cy="50" r="30" fill="none" stroke="var(--o)" stroke-width="12"/></svg>';
+// 開好幾個網頁（好幾個分頁、好幾台電腦）時只讓一個出聲：伺服器記住最後按「開聲音」的分頁（sound_owner），其他靜音。
+// 直播的 OBS 頁面（obs=1）照樣自己播（那是收進直播的聲音）。
+const CID = (() => { const r = Math.random().toString(36).slice(2, 10);
+  try { let c = sessionStorage.getItem("ooxx-cid"); if (!c) { c = r; sessionStorage.setItem("ooxx-cid", c); } return c; } catch (e) { return r; } })();
+const IS_OBS = new URLSearchParams(location.search).has("obs");
+const mine = () => IS_OBS || !state || !state.sound_owner || state.sound_owner === CID;
+let state = null, prevBoard = null, soundOn = false, seenMsgs = new Set(), audioQueue = [], playing = false, firstLoad = true;
+
+// 主題
+try { const t = localStorage.getItem("ooxx-theme"); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
+$("#theme").onclick = () => {
+  const cur = document.documentElement.dataset.theme || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+  const nxt = cur === "dark" ? "light" : "dark";
+  document.documentElement.dataset.theme = nxt; try { localStorage.setItem("ooxx-theme", nxt); } catch (e) {}
+};
+
+// 聲音閘門（瀏覽器規定要先有使用者動作才能自動播放）
+function setSound(on) {
+  soundOn = on; $("#gate").style.display = "none";
+  $("#pSound").textContent = "聲音：" + (on ? "開" : "關"); $("#pSound").className = "pill" + (on ? " ok" : "");
+  if (on) { const a = new Audio(); a.play().catch(() => {}); if (!IS_OBS) cmd("sound_owner", {cid: CID}); }
+}
+function soundPill() {
+  const other = soundOn && !mine();
+  $("#pSound").textContent = !soundOn ? "聲音：關" : other ? "聲音：別的頁面在播（點這裡改在這裡播）" : "聲音：開";
+  $("#pSound").className = "pill" + (soundOn && !other ? " ok" : "");
+}
+$("#gateOn").onclick = () => setSound(true);
+$("#gateOff").onclick = () => setSound(false);
+$("#pSound").onclick = () => (soundOn && !mine()) ? cmd("sound_owner", {cid: CID}) : setSound(!soundOn);
+$("#pSound").style.cursor = "pointer";
+
+function playNext() {
+  if (playing || !audioQueue.length) return;
+  playing = true;
+  const _k = new URLSearchParams(location.search).get("k"), _u = audioQueue.shift();
+  const a = new Audio(_k ? _u + (_u.includes("?") ? "&" : "?") + "k=" + encodeURIComponent(_k) : _u);
+  a.onended = a.onerror = () => { playing = false; playNext(); };
+  a.play().catch(() => { playing = false; });
+}
+
+// 盤面
+const boardEl = $("#board");
+for (let i = 0; i < 9; i++) {
+  const c = document.createElement("div"); c.className = "cell"; boardEl.appendChild(c);
+  c.onclick = () => { if (state && state.dry && state.phase === "human" && state.board[i] === " " && c.dataset.tapped !== "1") { c.dataset.tapped = "1"; cmd("sim_tap", {cell: i}); } };
+}
+function renderBoard(s) {
+  const cells = boardEl.children;
+  for (let i = 0; i < 9; i++) {
+    // 即時顯示：已確認的落子照常畫；還沒確認但相機已經看到的棋子也馬上畫出來（半透明）
+    const live = s.board[i] === " " && s.seen && s.seen[i] && s.seen[i] !== " ";
+    const v = live ? s.seen[i] : s.board[i], c = cells[i];
+    c.classList.toggle("live", !!live);
+    const html = `<span class="label">${s.names[i]}</span>` + (v === "X" ? XSVG : v === "O" ? OSVG : "");
+    if (c.dataset.v !== v) { c.innerHTML = html; if (v !== " " && prevBoard) c.querySelector(".piece")?.classList.add("pop"); c.dataset.v = v; }
+    if (v !== " " || s.phase !== "human") c.dataset.tapped = "";
+    c.classList.toggle("tappable", !!(s.dry && s.phase === "human" && v === " " && c.dataset.tapped !== "1"));
+    c.classList.toggle("blocked", v === " " && !s.robot_cells.includes(i) && s.robot_cells.length > 0);
+    c.classList.toggle("last", s.last_move === i);
+    c.classList.toggle("win", !!(s.win_line && s.win_line.includes(i)));
+  }
+  prevBoard = s.board;
+}
+
+let lastReset = null;
+function renderMsgs(s) {
+  const box = $("#msgs");
+  if (lastReset !== null && s.reset_n !== lastReset) box.innerHTML = "";   // 按過「重置」：訊息清空
+  lastReset = s.reset_n;
+  if (s.messages.length && box.querySelector(".empty")) box.innerHTML = "";
+  for (const m of s.messages) {
+    let el = document.getElementById("m" + m.id);
+    if (!el) {
+      el = document.createElement("div"); el.id = "m" + m.id; el.className = "msg " + m.role;
+      el.innerHTML = `<div class="t"></div><div class="meta"></div>`; box.appendChild(el);
+      box.scrollTop = box.scrollHeight;
+    }
+    el.querySelector(".t").textContent = m.text;
+    el.querySelector(".meta").textContent = new Date(m.t * 1000).toLocaleTimeString([], {hour: "2-digit", minute: "2-digit"});
+    if (m.audio && !seenMsgs.has(m.id)) {
+      seenMsgs.add(m.id);
+      if (soundOn && !firstLoad && mine()) { audioQueue.push(m.audio); playNext(); }
+    }
+  }
+}
+
+let _ac = null;
+function beep() {                       // 換人時的提示音（不經語音合成，馬上響）
+  try {
+    _ac = _ac || new (window.AudioContext || window.webkitAudioContext)();
+    [880, 1320].forEach((f, i) => {
+      const o = _ac.createOscillator(), g = _ac.createGain();
+      o.frequency.value = f; o.connect(g); g.connect(_ac.destination);
+      const t0 = _ac.currentTime + i * 0.14;
+      g.gain.setValueAtTime(0.0001, t0); g.gain.exponentialRampToValueAtTime(0.25, t0 + 0.02); g.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.13);
+      o.start(t0); o.stop(t0 + 0.14);
+    });
+  } catch (e) {}
+}
+async function poll() {
+  try {
+    const s = await (await fetch("/api/state?cid=" + CID + "&snd=" + (soundOn ? 1 : 0), {cache: "no-store"})).json();
+    state = s;
+    soundPill();
+    renderBoard(s); renderMsgs(s);
+    $("#status").textContent = s.status;
+    // 輪到誰：棋子一放開（hint）就先顯示「換你」，不等手臂收回
+    const you = s.phase === "human" || (s.phase === "robot" && s.hint === "human");
+    const t = $("#turn");
+    t.className = "turn " + (you ? "you" : (s.phase === "robot" || s.phase === "clearing" || s.phase === "selfplay") ? "bot" : "");
+    t.textContent = you ? ("👉 換你下 " + (s.human === "O" ? "◯（圈）" : "✕（叉）")) : s.phase === "robot" ? "🤖 機器下子中…" : s.phase === "clearing" ? "🤖 收棋盤中…" : s.phase === "selfplay" ? "🤖 機器對下中…" : "";
+    if (you && !window._wasYou && mine()) beep();
+    window._wasYou = you;
+    const nx = s.board.filter(v => v === "X").length, no = s.board.filter(v => v === "O").length;
+    $("#simClear").hidden = !s.dry;
+    if (s.phase === "handover" && !$("#camBox").open) $("#camBox").open = true;
+    $("#sub").textContent = s.phase === "human" ? (s.dry ? "乾跑：點一格模擬擺上 X，我會馬上看到。" : "擺好 X 之後手離開棋盤，我會馬上看到。") :
+      (s.phase === "robot" || s.phase === "clearing" || s.phase === "selfplay") ? "手臂動作中，請勿把手伸進棋盤或料區。" :
+      s.phase === "handover" ? (s.palm ? `看到手掌（離棋盤 ${s.palm.h} mm）${s.palm.ok ? "，保持不動" : ""}` : "掌心朝上、張開，伸到棋盤上方約 5 公分；說「停」隨時中斷。") : `X ${nx} 顆 · O ${no} 顆`;
+    $("#pCam").textContent = s.dry ? "盤面：模擬" : "相機" + (s.camera_ok ? "正常" : "異常"); $("#pCam").className = "pill " + (s.camera_ok ? "ok" : "bad");
+    if (s.calib_shift != null && s.calib_shift > s.calib_limit) { $("#pCam").textContent = "需重新校正"; $("#pCam").className = "pill bad"; }
+    $("#pArm").textContent = (s.dry || s.dry_arm) ? "手臂：模擬" : s.arm_error ? "手臂異常" : "手臂 B 就緒"; $("#pArm").className = "pill " + (s.arm_error ? "bad" : "ok");
+    if (document.activeElement !== $("#cO")) $("#cO").value = s.counts["O疊"] ?? 0;
+    if (document.activeElement !== $("#cX")) $("#cX").value = s.counts["X疊"] ?? 0;
+    firstLoad = false;
+  } catch (e) { $("#status").textContent = "與機器人斷線，重新連線中…"; }
+  setTimeout(poll, state && state.phase === "handover" ? 300 : 350);   // 交接時更新快一點
+}
+poll();
+// 直播（OBS 瀏覽器來源）：網址加 obs=1 → 不顯示聲音閘門、直接開聲音（OBS 允許自動播放），聲音由 OBS 收進直播
+if (new URLSearchParams(location.search).has("obs")) { setSound(true); document.documentElement.classList.add("obs"); }
+setInterval(() => { if ($("#camBox").open) $("#cam").src = "/api/camera.jpg?t=" + Date.now() + (new URLSearchParams(location.search).get("k") ? "&k=" + encodeURIComponent(new URLSearchParams(location.search).get("k")) : ""); }, 1500);
+
+// 指令按鈕
+async function cmd(c, extra = {}) {
+  await fetch("/api/cmd", {method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify({cmd: c, ...extra})});
+}
+document.querySelectorAll("[data-cmd]").forEach(b => b.onclick = () => cmd(b.dataset.cmd, {robot_first: !!b.dataset.robotFirst}));
+$("#setCounts").onclick = () => cmd("set_counts", {o: +$("#cO").value, x: +$("#cX").value});
+
+// 文字輸入
+$("#composer").onsubmit = async e => {
+  e.preventDefault(); const t = $("#text").value.trim(); if (!t) return; $("#text").value = "";
+  await fetch("/api/say", {method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify({text: t})});
+};
+
+// 語音：點一下開始、再點一下送出（8 秒自動送出）
+let rec = null, chunks = [], timer = null, stream = null;
+function pickMime() {
+  for (const m of ["audio/webm;codecs=opus", "audio/webm", "audio/mp4", "audio/ogg"]) if (window.MediaRecorder && MediaRecorder.isTypeSupported(m)) return m;
+  return "";
+}
+async function startRec() {
+  if (!navigator.mediaDevices?.getUserMedia) { $("#hint").textContent = "這個瀏覽器不能錄音（需要 HTTPS），請用打字。"; return; }
+  try { stream = await navigator.mediaDevices.getUserMedia({audio: {echoCancellation: true, noiseSuppression: true}}); }
+  catch (e) { $("#hint").textContent = "沒有麥克風權限：" + e.message; return; }
+  const mime = pickMime(); chunks = [];
+  rec = new MediaRecorder(stream, mime ? {mimeType: mime} : undefined);
+  rec.ondataavailable = e => e.data.size && chunks.push(e.data);
+  rec.onstop = sendRec;
+  rec.start(); $("#mic").classList.add("rec"); $("#hint").textContent = "聆聽中… 再按一次送出";
+  timer = setTimeout(stopRec, 8000);
+}
+function stopRec() { clearTimeout(timer); if (rec && rec.state === "recording") rec.stop(); $("#mic").classList.remove("rec"); stream?.getTracks().forEach(t => t.stop()); }
+async function sendRec() {
+  const blob = new Blob(chunks, {type: rec.mimeType || "audio/webm"});
+  if (blob.size < 2000) { $("#hint").textContent = "太短了，再說一次。"; return; }
+  $("#hint").textContent = "辨識中…";
+  try {
+    const r = await (await fetch("/api/voice", {method: "POST", headers: {"Content-Type": blob.type}, body: blob})).json();
+    $("#hint").textContent = r.ok ? "" : ("沒聽清楚：" + (r.error || ""));
+  } catch (e) { $("#hint").textContent = "上傳失敗：" + e.message; }
+}
+$("#mic").onclick = () => { if (!soundOn && $("#gate").style.display !== "none") setSound(true); (rec && rec.state === "recording") ? stopRec() : startRec(); };
+</script>
+</body>
+</html>

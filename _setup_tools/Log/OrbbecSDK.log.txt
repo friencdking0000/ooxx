@@ -1,0 +1,105 @@
+[11/15 19:16:45.650683][info][39812][HostTimestampProvider.cpp:36] Update clock type to: realtime(0)
+[11/15 19:16:45.755404][info][39812][DeviceManager.cpp:25] Current found device(s): (1)
+[11/15 19:16:45.755411][info][39812][DeviceManager.cpp:34] 	- Name: Gemini2, PID: 0x0670, SN/ID: AY68B520018, Connection: USB3.0
+[11/15 19:16:45.755416][info][39812][DeviceManager.cpp:488] Enable net device enumeration: true
+[11/15 19:16:46.776338][info][39812][DeviceManager.cpp:25] Current device(s) list: (1)
+[11/15 19:16:46.776371][info][39812][DeviceManager.cpp:34] 	- Name: Gemini2, PID: 0x0670, SN/ID: AY68B520018, Connection: USB3.0
+[11/15 19:16:46.776515][warning][39812][PropertyServer.cpp:120] [AY68B520018] Not added to property map, property not found in OBPropertyBaseInfoMap, id=108
+[11/15 19:16:46.776764][warning][39812][PropertyServer.cpp:120] [AY68B520018] Not added to property map, property not found in OBPropertyBaseInfoMap, id=5003
+[11/15 19:16:46.905382][info][39812][DeviceManager.cpp:200] Device created successfully! Name: Gemini 2, PID: 0x0670, SN/ID: AY68B520018 FW: 1.4.92
+[11/15 19:16:46.905426][info][39812][Pipeline.cpp:54] [AY68B520018] Pipeline created with device: {name: Gemini 2, sn: AY68B520018}, @0x1D2296BE530
+[11/15 19:16:46.973679][info][39812][Pipeline.cpp:228] [AY68B520018] Check and set config done!
+[11/15 19:16:46.974197][info][39812][Pipeline.cpp:266] [AY68B520018] Try to start streams!
+[11/15 19:16:46.974210][info][39812][VideoSensor.cpp:62] [AY68B520018] Try to start stream: {type: Color, format: MJPG, width: 1280, height: 720, fps: 30}
+[11/15 19:16:46.974218][info][39812][SensorBase.cpp:224] [AY68B520018] Stream state changed from STOPPED to STARTING@Color
+[11/15 19:16:46.974222][info][39812][VideoSensor.cpp:131] [AY68B520018] Start backend stream: {type: Color, format: MJPG, width: 1280, height: 720, fps: 30}
+[11/15 19:16:47.003933][info][39812][VideoSensor.cpp:62] [AY68B520018] Try to start stream: {type: Depth, format: RLE, width: 1280, height: 800, fps: 30}
+[11/15 19:16:47.003953][info][39812][SensorBase.cpp:224] [AY68B520018] Stream state changed from STOPPED to STARTING@Depth
+[11/15 19:16:47.003961][info][39812][VideoSensor.cpp:131] [AY68B520018] Start backend stream: {type: Depth, format: MJPG, width: 1280, height: 800, fps: 30}
+[11/15 19:16:47.009515][info][39812][Pipeline.cpp:293] [AY68B520018] Start streams done!
+[11/15 19:16:47.009527][info][39812][Pipeline.cpp:250] [AY68B520018] Pipeline start done!
+[11/15 19:16:47.099526][info][21916][SensorBase.cpp:224] [AY68B520018] Stream state changed from STARTING to STREAMING@Depth
+[11/15 19:16:47.155274][info][8188][SensorBase.cpp:224] [AY68B520018] Stream state changed from STARTING to STREAMING@Color
+[11/15 19:16:47.867140][info][39812][Pipeline.cpp:367] [AY68B520018] Try to stop pipeline!
+[11/15 19:16:47.867164][info][39812][Pipeline.cpp:343] [AY68B520018] Try to stop streams!
+[11/15 19:16:47.867177][info][39812][SensorBase.cpp:224] [AY68B520018] Stream state changed from STREAMING to STOPPING@Depth
+[11/15 19:16:47.914359][info][39812][SensorBase.cpp:224] [AY68B520018] Stream state changed from STOPPING to STOPPED@Depth
+[11/15 19:16:47.914586][info][39812][Pipeline.cpp:357] [AY68B520018] Sensor stream stopped, sensorType=Depth
+[11/15 19:16:47.914598][info][39812][SensorBase.cpp:224] [AY68B520018] Stream state changed from STREAMING to STOPPING@Color
+[11/15 19:16:47.989762][info][39812][SensorBase.cpp:224] [AY68B520018] Stream state changed from STOPPING to STOPPED@Color
+[11/15 19:16:47.989958][info][39812][Pipeline.cpp:357] [AY68B520018] Sensor stream stopped, sensorType=Color
+[11/15 19:16:47.989961][info][39812][Pipeline.cpp:363] [AY68B520018] Stop streams done!
+[11/15 19:16:47.990501][info][39812][Pipeline.cpp:393] [AY68B520018] Stop pipeline done!
+[11/15 19:16:48.047726][info][39812][Pipeline.cpp:65] [AY68B520018] Pipeline destroyed! @0x1D2296BE530
+[11/15 19:16:48.047840][info][39812][SensorBase.cpp:61] [AY68B520018] SensorBase is destroyed
+[11/15 19:16:48.047908][info][39812][SensorBase.cpp:61] [AY68B520018] SensorBase is destroyed
+[11/15 19:24:19.379538][info][29784][HostTimestampProvider.cpp:36] Update clock type to: realtime(0)
+[11/15 19:24:19.478729][info][29784][DeviceManager.cpp:25] Current found device(s): (1)
+[11/15 19:24:19.478739][info][29784][DeviceManager.cpp:34] 	- Name: Gemini2, PID: 0x0670, SN/ID: AY68B520018, Connection: USB3.0
+[11/15 19:24:19.478749][info][29784][DeviceManager.cpp:488] Enable net device enumeration: true
+[11/15 19:24:20.495145][info][29784][DeviceManager.cpp:25] Current device(s) list: (1)
+[11/15 19:24:20.495172][info][29784][DeviceManager.cpp:34] 	- Name: Gemini2, PID: 0x0670, SN/ID: AY68B520018, Connection: USB3.0
+[11/15 19:24:20.495314][warning][29784][PropertyServer.cpp:120] [AY68B520018] Not added to property map, property not found in OBPropertyBaseInfoMap, id=108
+[11/15 19:24:20.495355][warning][29784][PropertyServer.cpp:120] [AY68B520018] Not added to property map, property not found in OBPropertyBaseInfoMap, id=5003
+[11/15 19:24:20.618476][info][29784][DeviceManager.cpp:200] Device created successfully! Name: Gemini 2, PID: 0x0670, SN/ID: AY68B520018 FW: 1.4.92
+[11/15 19:24:20.618517][info][29784][Pipeline.cpp:54] [AY68B520018] Pipeline created with device: {name: Gemini 2, sn: AY68B520018}, @0x205DA407790
+[11/15 19:24:20.686783][info][29784][Pipeline.cpp:228] [AY68B520018] Check and set config done!
+[11/15 19:24:20.687383][info][29784][Pipeline.cpp:266] [AY68B520018] Try to start streams!
+[11/15 19:24:20.687397][info][29784][VideoSensor.cpp:62] [AY68B520018] Try to start stream: {type: Color, format: MJPG, width: 1280, height: 720, fps: 30}
+[11/15 19:24:20.687406][info][29784][SensorBase.cpp:224] [AY68B520018] Stream state changed from STOPPED to STARTING@Color
+[11/15 19:24:20.687409][info][29784][VideoSensor.cpp:131] [AY68B520018] Start backend stream: {type: Color, format: MJPG, width: 1280, height: 720, fps: 30}
+[11/15 19:24:20.716392][info][29784][VideoSensor.cpp:62] [AY68B520018] Try to start stream: {type: Depth, format: RLE, width: 1280, height: 800, fps: 30}
+[11/15 19:24:20.716406][info][29784][SensorBase.cpp:224] [AY68B520018] Stream state changed from STOPPED to STARTING@Depth
+[11/15 19:24:20.716414][info][29784][VideoSensor.cpp:131] [AY68B520018] Start backend stream: {type: Depth, format: MJPG, width: 1280, height: 800, fps: 30}
+[11/15 19:24:20.721407][info][29784][Pipeline.cpp:293] [AY68B520018] Start streams done!
+[11/15 19:24:20.721412][info][29784][Pipeline.cpp:250] [AY68B520018] Pipeline start done!
+[11/15 19:24:20.847081][info][5740][SensorBase.cpp:224] [AY68B520018] Stream state changed from STARTING to STREAMING@Color
+[11/15 19:24:20.856209][info][27008][SensorBase.cpp:224] [AY68B520018] Stream state changed from STARTING to STREAMING@Depth
+[11/15 19:24:21.571880][info][29784][Pipeline.cpp:367] [AY68B520018] Try to stop pipeline!
+[11/15 19:24:21.571930][info][29784][Pipeline.cpp:343] [AY68B520018] Try to stop streams!
+[11/15 19:24:21.571968][info][29784][SensorBase.cpp:224] [AY68B520018] Stream state changed from STREAMING to STOPPING@Depth
+[11/15 19:24:21.611796][info][29784][SensorBase.cpp:224] [AY68B520018] Stream state changed from STOPPING to STOPPED@Depth
+[11/15 19:24:21.611970][info][29784][Pipeline.cpp:357] [AY68B520018] Sensor stream stopped, sensorType=Depth
+[11/15 19:24:21.611979][info][29784][SensorBase.cpp:224] [AY68B520018] Stream state changed from STREAMING to STOPPING@Color
+[11/15 19:24:21.694988][info][29784][SensorBase.cpp:224] [AY68B520018] Stream state changed from STOPPING to STOPPED@Color
+[11/15 19:24:21.695202][info][29784][Pipeline.cpp:357] [AY68B520018] Sensor stream stopped, sensorType=Color
+[11/15 19:24:21.695204][info][29784][Pipeline.cpp:363] [AY68B520018] Stop streams done!
+[11/15 19:24:21.695696][info][29784][Pipeline.cpp:393] [AY68B520018] Stop pipeline done!
+[11/15 19:24:21.745882][info][29784][Pipeline.cpp:65] [AY68B520018] Pipeline destroyed! @0x205DA407790
+[11/15 19:24:21.745989][info][29784][SensorBase.cpp:61] [AY68B520018] SensorBase is destroyed
+[11/15 19:24:21.746046][info][29784][SensorBase.cpp:61] [AY68B520018] SensorBase is destroyed
+[11/15 19:31:17.780232][info][16292][HostTimestampProvider.cpp:36] Update clock type to: realtime(0)
+[11/15 19:31:17.865108][info][16292][DeviceManager.cpp:25] Current found device(s): (1)
+[11/15 19:31:17.865115][info][16292][DeviceManager.cpp:34] 	- Name: Gemini2, PID: 0x0670, SN/ID: AY68B520018, Connection: USB3.0
+[11/15 19:31:17.865120][info][16292][DeviceManager.cpp:488] Enable net device enumeration: true
+[11/15 19:31:18.884092][info][16292][DeviceManager.cpp:25] Current device(s) list: (1)
+[11/15 19:31:18.884127][info][16292][DeviceManager.cpp:34] 	- Name: Gemini2, PID: 0x0670, SN/ID: AY68B520018, Connection: USB3.0
+[11/15 19:31:18.884332][warning][16292][PropertyServer.cpp:120] [AY68B520018] Not added to property map, property not found in OBPropertyBaseInfoMap, id=108
+[11/15 19:31:18.884374][warning][16292][PropertyServer.cpp:120] [AY68B520018] Not added to property map, property not found in OBPropertyBaseInfoMap, id=5003
+[11/15 19:31:19.009191][info][16292][DeviceManager.cpp:200] Device created successfully! Name: Gemini 2, PID: 0x0670, SN/ID: AY68B520018 FW: 1.4.92
+[11/15 19:31:19.009231][info][16292][Pipeline.cpp:54] [AY68B520018] Pipeline created with device: {name: Gemini 2, sn: AY68B520018}, @0x1D23C1FD2B0
+[11/15 19:31:19.076289][info][16292][Pipeline.cpp:228] [AY68B520018] Check and set config done!
+[11/15 19:31:19.076855][info][16292][Pipeline.cpp:266] [AY68B520018] Try to start streams!
+[11/15 19:31:19.076870][info][16292][VideoSensor.cpp:62] [AY68B520018] Try to start stream: {type: Color, format: MJPG, width: 1280, height: 720, fps: 30}
+[11/15 19:31:19.076879][info][16292][SensorBase.cpp:224] [AY68B520018] Stream state changed from STOPPED to STARTING@Color
+[11/15 19:31:19.076883][info][16292][VideoSensor.cpp:131] [AY68B520018] Start backend stream: {type: Color, format: MJPG, width: 1280, height: 720, fps: 30}
+[11/15 19:31:19.105288][info][16292][VideoSensor.cpp:62] [AY68B520018] Try to start stream: {type: Depth, format: RLE, width: 1280, height: 800, fps: 30}
+[11/15 19:31:19.105315][info][16292][SensorBase.cpp:224] [AY68B520018] Stream state changed from STOPPED to STARTING@Depth
+[11/15 19:31:19.105329][info][16292][VideoSensor.cpp:131] [AY68B520018] Start backend stream: {type: Depth, format: MJPG, width: 1280, height: 800, fps: 30}
+[11/15 19:31:19.110195][info][16292][Pipeline.cpp:293] [AY68B520018] Start streams done!
+[11/15 19:31:19.110199][info][16292][Pipeline.cpp:250] [AY68B520018] Pipeline start done!
+[11/15 19:31:19.243155][info][10388][SensorBase.cpp:224] [AY68B520018] Stream state changed from STARTING to STREAMING@Depth
+[11/15 19:31:19.299244][info][32512][SensorBase.cpp:224] [AY68B520018] Stream state changed from STARTING to STREAMING@Color
+[11/15 19:31:20.009852][info][16292][Pipeline.cpp:367] [AY68B520018] Try to stop pipeline!
+[11/15 19:31:20.009902][info][16292][Pipeline.cpp:343] [AY68B520018] Try to stop streams!
+[11/15 19:31:20.009940][info][16292][SensorBase.cpp:224] [AY68B520018] Stream state changed from STREAMING to STOPPING@Depth
+[11/15 19:31:20.058212][info][16292][SensorBase.cpp:224] [AY68B520018] Stream state changed from STOPPING to STOPPED@Depth
+[11/15 19:31:20.058436][info][16292][Pipeline.cpp:357] [AY68B520018] Sensor stream stopped, sensorType=Depth
+[11/15 19:31:20.058445][info][16292][SensorBase.cpp:224] [AY68B520018] Stream state changed from STREAMING to STOPPING@Color
+[11/15 19:31:20.139338][info][16292][SensorBase.cpp:224] [AY68B520018] Stream state changed from STOPPING to STOPPED@Color
+[11/15 19:31:20.139553][info][16292][Pipeline.cpp:357] [AY68B520018] Sensor stream stopped, sensorType=Color
+[11/15 19:31:20.139557][info][16292][Pipeline.cpp:363] [AY68B520018] Stop streams done!
+[11/15 19:31:20.140107][info][16292][Pipeline.cpp:393] [AY68B520018] Stop pipeline done!
+[11/15 19:31:20.190462][info][16292][Pipeline.cpp:65] [AY68B520018] Pipeline destroyed! @0x1D23C1FD2B0
+[11/15 19:31:20.190578][info][16292][SensorBase.cpp:61] [AY68B520018] SensorBase is destroyed
+[11/15 19:31:20.190648][info][16292][SensorBase.cpp:61] [AY68B520018] SensorBase is destroyed

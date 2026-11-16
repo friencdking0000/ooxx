@@ -1,0 +1,265 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MG400 雙臂控制台</title>
+<style>
+:root {
+  --bg: #f4f5f7; --panel: #ffffff; --ink: #1d2330; --muted: #6b7280; --line: #e3e6eb;
+  --accent: #2563eb; --ok: #16a34a; --warn: #d97706; --bad: #dc2626; --led-off: #d7dbe1; --chip: #eef1f5;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #12151b; --panel: #1b2029; --ink: #e6e9ef; --muted: #9aa3b2; --line: #2a313d;
+    --accent: #60a5fa; --ok: #22c55e; --warn: #f59e0b; --bad: #f87171; --led-off: #343b48; --chip: #242b36;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #12151b; --panel: #1b2029; --ink: #e6e9ef; --muted: #9aa3b2; --line: #2a313d;
+  --accent: #60a5fa; --ok: #22c55e; --warn: #f59e0b; --bad: #f87171; --led-off: #343b48; --chip: #242b36;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 14px/1.45 "Noto Sans TC", "Microsoft JhengHei", system-ui, sans-serif; }
+header { position: sticky; top: 0; z-index: 5; display: flex; gap: 12px; align-items: center; flex-wrap: wrap;
+  padding: 10px 16px; background: var(--panel); border-bottom: 1px solid var(--line); }
+header h1 { font-size: 17px; margin: 0 auto 0 0; }
+.stopall { background: var(--bad); color: #fff; border: 0; border-radius: 8px; padding: 10px 18px; font-size: 15px; font-weight: 700; cursor: pointer; }
+main { padding: 16px; display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(420px, 1fr)); max-width: 1500px; margin: 0 auto; }
+.panel { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 14px; min-width: 0; }
+.panel h2 { font-size: 16px; margin: 0 0 10px; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.pill { font-size: 12px; padding: 2px 10px; border-radius: 99px; background: var(--chip); color: var(--muted); font-weight: 600; }
+.pill.ok { background: color-mix(in srgb, var(--ok) 18%, transparent); color: var(--ok); }
+.pill.warn { background: color-mix(in srgb, var(--warn) 18%, transparent); color: var(--warn); }
+.pill.bad { background: color-mix(in srgb, var(--bad) 18%, transparent); color: var(--bad); }
+.section { border-top: 1px solid var(--line); padding-top: 10px; margin-top: 10px; }
+.section h3 { font-size: 12px; color: var(--muted); margin: 0 0 6px; font-weight: 600; letter-spacing: .03em; }
+table.vals { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+table.vals td { padding: 2px 6px; }
+table.vals td.k { color: var(--muted); width: 2.5em; }
+.vals .v { font-family: ui-monospace, Consolas, monospace; font-size: 15px; }
+.leds { display: grid; grid-template-columns: repeat(8, 1fr); gap: 4px; }
+.led { text-align: center; font-size: 11px; padding: 4px 0; border-radius: 6px; background: var(--led-off); color: var(--muted); user-select: none; }
+.led.on { background: var(--ok); color: #fff; }
+button.led { border: 0; cursor: pointer; font: inherit; font-size: 11px; }
+button.led:hover { outline: 2px solid var(--accent); }
+.row { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+.btn { border: 1px solid var(--line); background: var(--chip); color: var(--ink); border-radius: 7px; padding: 6px 12px; cursor: pointer; font: inherit; }
+.btn:hover { border-color: var(--accent); }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+.btn.danger { background: var(--bad); border-color: var(--bad); color: #fff; }
+.jog { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+.jog .btn { padding: 10px 0; touch-action: none; user-select: none; font-weight: 600; }
+.jog .btn.active { background: var(--warn); border-color: var(--warn); color: #fff; }
+.form { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+.form input { width: 100%; padding: 6px; border: 1px solid var(--line); border-radius: 6px; background: var(--bg); color: var(--ink); font-family: ui-monospace, Consolas, monospace; }
+.form label { font-size: 11px; color: var(--muted); }
+.errs { color: var(--bad); font-size: 13px; }
+.log { font-family: ui-monospace, Consolas, monospace; font-size: 11.5px; color: var(--muted); max-height: 120px; overflow: auto; white-space: pre-wrap; }
+.cam { grid-column: 1 / -1; }
+.cam img { width: 100%; max-width: 960px; border-radius: 8px; display: block; background: #000; }
+.camerr { max-width: 960px; aspect-ratio: 16 / 9; border-radius: 8px; display: flex; align-items: center; justify-content: center;
+  text-align: center; padding: 16px; background: color-mix(in srgb, var(--bad) 12%, var(--panel)); color: var(--bad); font-weight: 700; border: 2px dashed var(--bad); }
+.camerr[hidden], .cam img[hidden] { display: none; }
+.muted { color: var(--muted); font-size: 12px; }
+input[type=range] { width: 160px; }
+@media (max-width: 480px) { main { padding: 12px; grid-template-columns: 1fr; } .leds { grid-template-columns: repeat(4, 1fr); } }
+</style>
+</head>
+<body>
+<header>
+  <h1>MG400 雙臂控制台</h1>
+  <span class="muted" id="conn">連線中…</span>
+  <button class="btn" id="theme">深色／淺色</button>
+  <button class="stopall" id="stopall">■ 全部停止</button>
+</header>
+<main id="main">
+  <section class="panel cam">
+    <h2>相機 <span class="pill" id="camstate">—</span></h2>
+    <img id="camimg" alt="相機畫面">
+    <div id="camerr" class="camerr" hidden>相機異常：沒有收到 Gemini 2 的影像（不會改用其他鏡頭）</div>
+  </section>
+</main>
+<template id="armtpl">
+  <section class="panel arm">
+    <h2><span class="title"></span> <span class="pill mode">—</span> <span class="pill online">—</span></h2>
+    <div class="errs"></div>
+    <div class="row">
+      <button class="btn primary" data-cmd="enable">使能</button>
+      <button class="btn" data-cmd="disable">下使能</button>
+      <button class="btn" data-cmd="clear">清報警</button>
+      <button class="btn danger" data-cmd="stop">停止</button>
+      <button class="btn danger" data-cmd="estop">急停</button>
+    </div>
+    <div class="row" style="margin-top:8px">
+      <span class="muted">速度</span><input type="range" min="1" max="100" value="10" class="spd">
+      <span class="spdv muted">10%</span><button class="btn" data-act="speed">套用</button>
+      <span class="muted">目前 <b class="spdnow">—</b>%</span>
+    </div>
+    <div class="section">
+      <h3>位置（TCP，mm／°）</h3>
+      <table class="vals"><tr><td class="k">X</td><td class="v px">—</td><td class="k">Y</td><td class="v py">—</td>
+        <td class="k">Z</td><td class="v pz">—</td><td class="k">R</td><td class="v pr">—</td></tr>
+        <tr><td class="k">J1</td><td class="v j1">—</td><td class="k">J2</td><td class="v j2">—</td>
+        <td class="k">J3</td><td class="v j3">—</td><td class="k">J4</td><td class="v j4">—</td></tr></table>
+    </div>
+    <div class="section"><h3>數位輸入 DI1–DI16（唯讀）</h3><div class="leds di"></div></div>
+    <div class="section"><h3>數位輸出 DO1–DO16（點擊切換，立即生效）</h3><div class="leds do"></div></div>
+    <div class="section">
+      <h3>點動（按住才動，放開即停；需先使能）</h3>
+      <div class="jog jj"></div><div class="jog jc" style="margin-top:6px"></div>
+    </div>
+    <div class="section">
+      <h3>座標移動（先檢查 IK、Z 下限與相機支架禁入區）</h3>
+      <div class="form">
+        <div><label>X</label><input class="tx"></div><div><label>Y</label><input class="ty"></div>
+        <div><label>Z</label><input class="tz"></div><div><label>R</label><input class="tr"></div>
+      </div>
+      <div class="row" style="margin-top:6px">
+        <button class="btn" data-act="fill">填入目前位置</button>
+        <button class="btn primary" data-act="movj">MovJ</button>
+        <button class="btn primary" data-act="movl">MovL</button>
+        <button class="btn" data-act="park">回停放點</button>
+      </div>
+      <div class="form" style="margin-top:8px">
+        <div><label>J1</label><input class="q1"></div><div><label>J2</label><input class="q2"></div>
+        <div><label>J3</label><input class="q3"></div><div><label>J4</label><input class="q4"></div>
+      </div>
+      <div class="row" style="margin-top:6px">
+        <button class="btn" data-act="fillj">填入目前關節</button>
+        <button class="btn primary" data-act="jointmovj">JointMovJ</button>
+      </div>
+    </div>
+    <div class="section"><h3>紀錄</h3><div class="log"></div></div>
+  </section>
+</template>
+<script>
+const $ = (r, s) => r.querySelector(s);
+const panels = {};
+let zmin = -110;
+
+try { const t = localStorage.getItem("theme"); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
+$(document, "#theme").onclick = () => {
+  const cur = document.documentElement.dataset.theme ||
+    (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+  const next = cur === "dark" ? "light" : "dark";
+  document.documentElement.dataset.theme = next;
+  try { localStorage.setItem("theme", next); } catch (e) {}
+};
+
+async function cmd(arm, c, args = {}) {
+  const r = await fetch("/api/cmd", { method: "POST", headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ arm, cmd: c, args }) });
+  const j = await r.json();
+  const bad = Object.entries(j).filter(([k, v]) => v && v.ok === false);
+  if (bad.length && c !== "jog") alert(bad.map(([k, v]) => `${k}：${v.reply}`).join("\n"));
+  return j;
+}
+
+$(document, "#stopall").onclick = () => { stopJog(); cmd("ALL", "stop"); };
+
+// ---- 點動：按住送心跳，放開／離開／切分頁就停 ----
+let jog = null;
+function startJog(arm, axis, el) {
+  if (jog) stopJog();
+  el.classList.add("active");
+  jog = { arm, axis, el, t: setInterval(() => cmd(arm, "jog", { axis }), 100) };
+  cmd(arm, "jog", { axis });
+}
+function stopJog() {
+  if (!jog) return;
+  clearInterval(jog.t); jog.el.classList.remove("active");
+  cmd(jog.arm, "jog_stop"); jog = null;
+}
+["pointerup", "pointercancel", "blur"].forEach(e => window.addEventListener(e, stopJog));
+document.addEventListener("visibilitychange", () => { if (document.hidden) stopJog(); });
+
+function buildArm(name) {
+  const el = document.importNode($(document, "#armtpl").content, true).firstElementChild;
+  $(el, ".title").textContent = name === "A" ? "手臂 A" : "手臂 B";
+  const di = $(el, ".di"), dout = $(el, ".do");
+  for (let i = 1; i <= 16; i++) {
+    const d = document.createElement("div"); d.className = "led"; d.textContent = "DI" + i; di.appendChild(d);
+    const b = document.createElement("button"); b.className = "led"; b.textContent = "DO" + i;
+    b.onclick = () => cmd(name, "do", { index: i, value: b.classList.contains("on") ? 0 : 1 });
+    dout.appendChild(b);
+  }
+  const mk = (box, axes) => axes.forEach(a => {
+    const b = document.createElement("button"); b.className = "btn"; b.textContent = a;
+    b.addEventListener("pointerdown", e => { e.preventDefault(); b.setPointerCapture(e.pointerId); startJog(name, a, b); });
+    b.addEventListener("pointerleave", stopJog);
+    box.appendChild(b);
+  });
+  mk($(el, ".jj"), ["J1-", "J1+", "J2-", "J2+", "J3-", "J3+", "J4-", "J4+"]);
+  mk($(el, ".jc"), ["X-", "X+", "Y-", "Y+", "Z-", "Z+", "R-", "R+"]);
+  el.querySelectorAll("[data-cmd]").forEach(b => b.onclick = () => {
+    const c = b.dataset.cmd;
+    if (c === "estop" && !confirm(`對手臂 ${name} 觸發急停？之後需清報警才能再使能。`)) return;
+    cmd(name, c);
+  });
+  const spd = $(el, ".spd");
+  spd.oninput = () => $(el, ".spdv").textContent = spd.value + "%";
+  const num = s => parseFloat($(el, s).value);
+  el.querySelectorAll("[data-act]").forEach(b => b.onclick = () => {
+    const a = b.dataset.act, s = panels[name].last || {};
+    if (a === "speed") return cmd(name, "speed", { value: +spd.value });
+    if (a === "fill" && s.pose) { [".tx", ".ty", ".tz", ".tr"].forEach((k, i) => $(el, k).value = s.pose[i]); return; }
+    if (a === "fillj" && s.joints) { [".q1", ".q2", ".q3", ".q4"].forEach((k, i) => $(el, k).value = s.joints[i]); return; }
+    if (a === "movj" || a === "movl") {
+      const p = { x: num(".tx"), y: num(".ty"), z: num(".tz"), r: num(".tr") };
+      if (Object.values(p).some(isNaN)) return alert("請填完 X Y Z R");
+      if (p.z < zmin) return alert(`Z 不可低於 ${zmin}`);
+      if (!confirm(`手臂 ${name} ${a === "movj" ? "MovJ" : "MovL"} 到 (${p.x}, ${p.y}, ${p.z}, R${p.r})？確認周圍淨空。`)) return;
+      return cmd(name, a, p);
+    }
+    if (a === "jointmovj") {
+      const p = { j1: num(".q1"), j2: num(".q2"), j3: num(".q3"), j4: num(".q4") };
+      if (Object.values(p).some(isNaN)) return alert("請填完 J1–J4");
+      if (!confirm(`手臂 ${name} JointMovJ 到 (${p.j1}, ${p.j2}, ${p.j3}, ${p.j4})？確認周圍淨空。`)) return;
+      return cmd(name, "jointmovj", p);
+    }
+    if (a === "park" && confirm(`手臂 ${name} 回停放點（先只升不降，再 MovJ）？`)) return cmd(name, "park");
+  });
+  $(document, "#main").appendChild(el);
+  panels[name] = { el };
+}
+
+function render(name, s) {
+  if (!panels[name]) buildArm(name);
+  const p = panels[name], el = p.el; p.last = s;
+  const online = $(el, ".online"), mode = $(el, ".mode");
+  online.textContent = s.online ? `在線 ${s.ip}` : `離線 ${s.ip}`;
+  online.className = "pill online " + (s.online ? "ok" : "bad");
+  mode.textContent = s.online ? s.mode_name + (s.jog ? `（點動 ${s.jog}）` : "") : "—";
+  mode.className = "pill mode " + (!s.online ? "" : s.mode === 9 ? "bad" : s.mode === 5 || s.mode === 7 || s.mode === 11 ? "ok" : "warn");
+  $(el, ".errs").textContent = (s.errors || []).map(e => `報警 ${e.id}：${e.desc}`).join("　");
+  const f = v => (v == null ? "—" : v.toFixed(2));
+  const pose = s.pose || [], j = s.joints || [];
+  [".px", ".py", ".pz", ".pr"].forEach((k, i) => $(el, k).textContent = f(pose[i]));
+  [".j1", ".j2", ".j3", ".j4"].forEach((k, i) => $(el, k).textContent = f(j[i]));
+  $(el, ".spdnow").textContent = s.speed ?? "—";
+  [...$(el, ".di").children].forEach((d, i) => d.classList.toggle("on", !!(s.di && s.di[i])));
+  [...$(el, ".do").children].forEach((d, i) => d.classList.toggle("on", !!(s.do && s.do[i])));
+  $(el, ".log").textContent = (s.log || []).slice().reverse().join("\n");
+}
+
+async function poll() {
+  try {
+    const r = await fetch("/api/state"); const j = await r.json();
+    document.querySelector("h1").textContent = j.watch ? "MG400 雙臂監控（只看不控：對弈伺服器在跑）" : "MG400 雙臂控制台";
+    zmin = j.limits.z_min;
+    Object.entries(j.arms).forEach(([n, s]) => render(n, s));
+    $(document, "#conn").textContent = "已連線 " + new Date().toLocaleTimeString();
+    const cs = $(document, "#camstate");
+    cs.textContent = j.camera.ok ? "即時" : (j.camera.err ? "異常：" + j.camera.err : "連線中…");
+    cs.className = "pill " + (j.camera.ok ? "ok" : "bad");
+    $(document, "#camimg").hidden = !j.camera.ok;
+    $(document, "#camerr").hidden = j.camera.ok;
+  } catch (e) { $(document, "#conn").textContent = "後端未回應"; }
+  setTimeout(poll, 200);
+}
+setInterval(() => { $(document, "#camimg").src = "/api/camera.jpg?t=" + Date.now(); }, 700);
+poll();
+</script>
+</body>
+</html>

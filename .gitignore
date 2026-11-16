@@ -1,0 +1,38 @@
+__pycache__/
+*.pyc
+*.stackdump
+site.json
+# 金鑰／憑證／存取碼（每台機器自己產生）
+Arena/access.txt
+Arena/key.pem
+Arena/cert.pem
+# 執行期產物
+Arena/cam_full.jpg
+Arena/cam_depth.png
+Arena/cam_error.txt
+Arena/depth_request
+Arena/*.tmp
+Arena/out/
+Arena/Log/
+Arena/voice_cache/
+Arena/tts_test.wav
+Arena/voice_ref/last_*.wav
+Arena/voice_ref/*_test.wav
+Calib/out/
+Calib/Log/
+Console/Log/
+Console/cam_latest.jpg
+Console/server.log
+Gemini2/out/
+Gemini2/Log/
+dist/
+Vision/dataset/
+Vision/runs/
+Vision/work/*.jpg
+Vision/work/yolov8n.pt
+Vision/yolo11n.pt
+Vision/work/train.log
+# 舊打包檔與測試資料
+_setup_tools/*.zip
+Arena/depth_test.npy
+Arena/voice_ref/*.wav
